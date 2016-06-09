@@ -1,5 +1,6 @@
-var userWorkTime = 1;
-var userBreakTime = 1;
+var userWorkTime = $('#work-time-input').val();
+console.log(userWorkTime);
+var userBreakTime = $('#break-time-input').val();
 var msLeft = userWorkTime * 60000;
 var msBreakLeft = userBreakTime * 60000 + msLeft;
 var previousTime;
@@ -34,7 +35,7 @@ var segment = msLeft/16;
 for (var i = 15; i >= 0; i--){
     ovalSegments.push((Math.ceil(segment * i/1000))*1000);
 }
-console.log(ovalSegments);
+//console.log(ovalSegments);
 
 function createClock(){
   var timeinterval = setInterval(function(){
@@ -105,4 +106,24 @@ $('.pauseButton').click(function(){
   $('.startButton').show();
   $('.resetButton').show();
   $('.pauseButton').hide();
+})
+
+
+//on click get the id of the closest input
+
+$('.incButton').click(function(){
+  var $button = $(this);
+  var inputId = $button.closest('div.form').find('input').attr('id');
+  var oldValue = $button.closest('div.form').find('input').val();
+  console.log(oldValue);
+  if ($button.text() === '+'){
+    var newVal = parseFloat(oldValue) + 1;
+  } else {
+    if (oldValue > 0) {
+      var newVal = parseFloat(oldValue) - 1;
+    } else {
+      newVal = 0;
+    }
+  }
+  $button.parent().find("input").val(newVal);
 })
