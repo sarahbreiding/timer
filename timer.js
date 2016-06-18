@@ -1,7 +1,6 @@
+
 var userWorkTime = $('#work-time-input').val() * 60000;
 var userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
-// var userWorkTime = userWorkTime * 60000;
-// var userBreakTime = userBreakTime * 60000 + userWorkTime;
 var previousTime;
 $('.pauseButton').hide();
 $('.resetButton').hide();
@@ -9,7 +8,7 @@ var isWorkPaused = false;
 var isBreakPaused = false;
 
 function getTimeRemaining(){
-  // currentTime = Date.now();
+  currentTime = Date.now();
   currentTime = new Date().getTime();
   var timeElapsed = currentTime - previousTime;
   previousTime = currentTime;
@@ -29,24 +28,34 @@ function getTimeRemaining(){
   };
 }
 
-// var oval = [Math.PI/8, Math.PI/4, 3*Math.PI/8, Math.PI/2, 5*Math.PI/8, 3*Math.PI/4, 7*Math.PI/8, Math.PI, 9*Math.PI/8, 5*Math.PI/4, 11*Math.PI/8, 3*Math.PI/2, 13*Math.PI/8, 7*Math.PI/4, 15*Math.PI/8, 2*Math.PI];
-// var ovalSegments = [];
-// var segment = userWorkTime/16;
-// for (var i = 15; i >= 0; i--){
-//     ovalSegments.push((Math.ceil(segment * i/1000))*1000);
-// }
-//console.log(ovalSegments);
+var oval = [Math.PI/8, Math.PI/4, 3*Math.PI/8, Math.PI/2, 5*Math.PI/8, 3*Math.PI/4, 7*Math.PI/8, Math.PI, 9*Math.PI/8, 5*Math.PI/4, 11*Math.PI/8, 3*Math.PI/2, 13*Math.PI/8, 7*Math.PI/4, 15*Math.PI/8, 2*Math.PI];
+var workSegmentsArr = [];
+var breakSegmentsArr = [];
+function createOvalSegments(segment, arr) {
+  for (var i = 16; i > 0; i--){
+    arr.push((segment * i/1000)*1000);
+  }
+  return arr;
+}
 
 function createClock(){
+  var workSegment = userWorkTime/16;
+  var breakSegment = userBreakTime/16 - workSegment;
+  var workOval = createOvalSegments(workSegment, workSegmentsArr);
+  var breakOval = createOvalSegments(breakSegment, breakSegmentsArr);
+  var workCanvas = document.getElementById('workCircle');
+  var breakCanvas = document.getElementById('breakCircle');
+  var ctxWork = workCanvas.getContext('2d');
+  var ctxBreak = breakCanvas.getContext('2d');
   var timeinterval = setInterval(function(){
     var t = getTimeRemaining();
-    //console.log(t);
+    console.log(t);
     $('.workClock').html(t.minutes + ':' + t.seconds);
-    // for (var i = 0; i < ovalSegments.length; i++){
-    //   if (t.total <= ovalSegments[i]){
-    //     drawCircle(oval[i], 'workCircle');
-    //   }
-    // }
+    for (var i = 0; i < workOval.length; i++){
+      if (t.total <= workOval[i]){
+        drawCircle(oval[i], 'workCircle');
+      }
+    }
     if (isWorkPaused){
       $('.workClock').html(t.minutes + ':' + t.seconds);
       clearInterval(timeinterval);
@@ -54,24 +63,27 @@ function createClock(){
       $('.breakClock').html(t.breakMinutes + ':' + t.breakSeconds);
       $('.workClock').html('0:00');
       clearInterval(timeinterval);
-    } else if (t.breakSeconds <= 0 && t.breakTotal <= 0){
+    } else if (t.breakSeconds < 0 && t.breakTotal < 0){
         $('.breakClock').html('0:00');
+        ctxWork.clearRect(0, 0, 500, 500);
+        ctxBreak.clearRect(0, 0, 500, 500);
         userWorkTime = $('#work-time-input').val() * 60000;
         userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
-        //previousTime = Date.now();
-        //t = getTimeRemaining();
         $('.workClock').html(t.minutes + ':' + t.seconds);
-     } else if (t.seconds <= 0 && t.total <= 0){
+     } else if (t.seconds < 0 && t.total < 0){
       $('.workClock').html('0:00');
       $('.breakClock').html(t.breakMinutes + ':' + t.breakSeconds);
+      for (var i = 0; i < breakOval.length; i++){
+        if (t.breakTotal <= breakOval[i]){
+          drawCircle(oval[i], 'breakCircle');
+        }
+      }
      }
-  //var canvas = document.getElementById('breakCircle');
-      //var ctx = canvas.getContext("2d");
-      //ctx.clearRect(0, 0, 500, 500);
-      //var breaktime = new Date(new Date().getTime() + userBreaktime);
-      //createBreakClock('.breakClock', 'breakCircle');
      $('.resetButton').click(function(){
       clearInterval(timeinterval);
+      userWorkTime = $('#work-time-input').val() * 60000;
+      userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
+      ctxWork.clearRect(0, 0, 500, 500);
       $('.workClock').empty();
       $('.breakClock').empty();
       $('.resetButton').hide();
@@ -82,8 +94,7 @@ function createClock(){
 }
 
 $('.startButton').click(function(){
-  //previousTime = Date.now();
-  previousTime = new Date().getTime();
+  previousTime = Date.now();
   if (isWorkPaused) {
     isWorkPaused = false;
     createClock();
@@ -126,21 +137,21 @@ $('.incButton').click(function(){
   $button.parent().find('input').val(newVal);
   if (inputId === 'work-time-input'){
     userWorkTime = newVal * 60000;
-  }
-  else if (inputId === 'break-time-input'){
-    userBreakTime = newVal * 60000;
+    userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
+  } else if (inputId === 'break-time-input'){
+    //userWorkTime = $('#work-time-input').val() * 60000;
+    userBreakTime = newVal * 60000 + userWorkTime;
   }
 })
 
 $('#work-time-input').change(function(){
   userWorkTime = $(this).val() * 60000;
+  userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
 });
 
 $('#break-time-input').change(function(){
   userBreakTime = $(this).val() * 60000 + userWorkTime;
 })
-
-//on change of the input change userWorkTime and userBreakTime
 
 function drawCircle(angle, id) {
     var mainCanvas = document.getElementById(id);
@@ -151,3 +162,5 @@ function drawCircle(angle, id) {
     mainContext.strokeStyle = '#66CC01';
     mainContext.stroke();
   }
+
+//get oval to work on breaktime, start it at 12o clock
