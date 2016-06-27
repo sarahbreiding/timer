@@ -1,14 +1,11 @@
-
-var userTime = $('.time-input').val() * 60000;
+var userTime;
 var previousTime;
 $('.pauseButton').hide();
 $('.resetButton').hide();
-var isWorkPaused = false;
-var isBreakPaused = false;
+var isPaused = false;
 
 function getTimeRemaining(){
-  currentTime = Date.now();
-  currentTime = new Date().getTime();
+  var currentTime = Date.now();
   var timeElapsed = currentTime - previousTime;
   previousTime = currentTime;
   userTime = userTime - timeElapsed;
@@ -17,45 +14,45 @@ function getTimeRemaining(){
   return {
     'total': userTime,
     'minutes': minutes,
-    'seconds': seconds,
+    'seconds': seconds
   };
 }
 
-
-function createClock(){
+function createClock(clockDiv){
   var timeinterval = setInterval(function(){
     var t = getTimeRemaining();
-    //console.log(t);
-    $('.workClock').html(t.minutes + ':' + t.seconds);
-    if (isWorkPaused){
-      $('.workClock').html(t.minutes + ':' + t.seconds);
-      clearInterval(timeinterval);
-    } else if (isBreakPaused){
-      $('.breakClock').html(t.breakMinutes + ':' + t.breakSeconds);
-      $('.workClock').html('0:00');
+    console.log(t);
+    $(clockDiv).html(t.minutes + ':' + t.seconds);
+    if (isPaused){
+      $(clockDiv).html(t.minutes + ':' + t.seconds);
       clearInterval(timeinterval);
     } else if (t.seconds < 0 && t.total < 0){
-      $('.workClock').html('0:00');
+      $(clockDiv).html('0:00');
       clearInterval(timeinterval);
-     }
-     $('.resetButton').click(function(){
+      $('.startButton').show();
+      $('.resetButton').hide();
+      $('.pauseButton').hide();
+    }
+    $('.resetButton').click(function(){
+      $(clockDiv).empty();
       clearInterval(timeinterval);
-      userWorkTime = $('#work-time-input').val() * 60000;
-      userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
+      $('.startButton').show();
+      $('.resetButton').hide();
+      $('.pauseButton').hide();
     })
   },10);
 }
 
 $('.startButton').click(function(){
   previousTime = Date.now();
-  if (isWorkPaused) {
-    isWorkPaused = false;
-    createClock();
-  } else if (isBreakPaused){
-    isBreakPaused = false;
-    createClock();
+  var clockClass = $(this).parent().next('div').attr('class');
+  if (isPaused) {
+    isPaused = false;
+    createClock('.' + clockClass);
   } else {
-   createClock();
+    var inputId = $(this).closest('div.form').find('input').attr('id');
+    userTime = $('#' + inputId).val() * 60000;
+    createClock('.' + clockClass);
   }
   $('.startButton').hide();
   $('.pauseButton').show();
@@ -63,11 +60,7 @@ $('.startButton').click(function(){
 })
 
 $('.pauseButton').click(function(){
-  if (userWorkTime > 0){
-    isWorkPaused = true;
-  } else {
-    isBreakPaused = true;
-  }
+  isPaused = true;
   $('.startButton').show();
   $('.resetButton').show();
   $('.pauseButton').hide();
@@ -88,23 +81,22 @@ $('.incButton').click(function(){
     }
   }
   $button.parent().find('input').val(newVal);
-  if (inputId === 'work-time-input'){
-    userWorkTime = newVal * 60000;
-    userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
+  /*if (inputId === 'work-time-input'){
+    userTime = newVal * 60000;
   } else if (inputId === 'break-time-input'){
     //userWorkTime = $('#work-time-input').val() * 60000;
     userBreakTime = newVal * 60000 + userWorkTime;
-  }
+  }*/
 })
 
-$('#work-time-input').change(function(){
-  userWorkTime = $(this).val() * 60000;
+/*$('#work-time-input').change(function(){
+  userTime = $(this).val() * 60000;
   userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
 });
 
 $('#break-time-input').change(function(){
   userBreakTime = $(this).val() * 60000 + userWorkTime;
-})
+})*/
 
 function drawCircle(angle, id) {
     var mainCanvas = document.getElementById(id);
@@ -115,5 +107,3 @@ function drawCircle(angle, id) {
     mainContext.strokeStyle = '#66CC01';
     mainContext.stroke();
   }
-
-//get oval to work on breaktime, start it at 12o clock
