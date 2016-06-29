@@ -1,9 +1,7 @@
 var userTime;
 var previousTime;
-$('.pauseButton').hide();
-$('.resetButton').hide();
 var isPaused = false;
-
+var timeSegments = [];
 function getTimeRemaining(){
   var currentTime = Date.now();
   var timeElapsed = currentTime - previousTime;
@@ -21,14 +19,20 @@ function getTimeRemaining(){
 function createClock(clockDiv){
   var timeinterval = setInterval(function(){
     var t = getTimeRemaining();
-    console.log(t);
+    //console.log(t);
     $(clockDiv).html(t.minutes + ':' + t.seconds);
+    for (var j = 0; j < timeSegments.length; j++){
+      if (t.total <= timeSegments[j]){
+        drawHourGlass(hourGlassCords,j);
+      }
+    }
     if (isPaused){
       $(clockDiv).html(t.minutes + ':' + t.seconds);
       clearInterval(timeinterval);
     } else if (t.seconds < 0 && t.total < 0){
       $(clockDiv).html('0:00');
       clearInterval(timeinterval);
+      timeSegments = [];
       $('.startButton').show();
       $('.resetButton').hide();
       $('.pauseButton').hide();
@@ -36,9 +40,15 @@ function createClock(clockDiv){
     $('.resetButton').click(function(){
       $(clockDiv).empty();
       clearInterval(timeinterval);
-      $('.startButton').show();
-      $('.resetButton').hide();
-      $('.pauseButton').hide();
+      if ($(this).attr('id') === 'resetWork'){
+        $('#startWork').show();
+        $('#pauseWork').hide();
+        $('#resetWork').hide();
+      } else {
+        $('#startBreak').show();
+        $('#pauseBreak').hide();
+        $('#resetBreak').hide();
+      }
     })
   },10);
 }
@@ -52,18 +62,35 @@ $('.startButton').click(function(){
   } else {
     var inputId = $(this).closest('div.form').find('input').attr('id');
     userTime = $('#' + inputId).val() * 60000;
+    var timeFifths = userTime/4;
+    for (var i = 4; i >= 0; i--){
+      timeSegments.push(timeFifths * i);
+    }
+    //$('.fa-hourglass-o').addClass('fa-hourglass-180');
     createClock('.' + clockClass);
   }
-  $('.startButton').hide();
-  $('.pauseButton').show();
-  $('.resetButton').show();
+  if ($(this).attr('id') === 'startWork'){
+    $('#startWork').hide();
+    $('#pauseWork').show();
+    $('#resetWork').show();
+  } else {
+    $('#startBreak').hide();
+    $('#pauseBreak').show();
+    $('#resetBreak').show();
+  }
 })
 
 $('.pauseButton').click(function(){
   isPaused = true;
-  $('.startButton').show();
-  $('.resetButton').show();
-  $('.pauseButton').hide();
+  if ($(this).attr('id') === 'pauseWork'){
+    $('#startWork').show();
+    $('#pauseWork').hide();
+    $('#resetWork').show();
+  } else {
+    $('#startBreak').show();
+    $('#pauseBreak').hide();
+    $('#resetBreak').show();
+  }
 })
 
 $('.incButton').click(function(){
@@ -81,29 +108,29 @@ $('.incButton').click(function(){
     }
   }
   $button.parent().find('input').val(newVal);
-  /*if (inputId === 'work-time-input'){
-    userTime = newVal * 60000;
-  } else if (inputId === 'break-time-input'){
-    //userWorkTime = $('#work-time-input').val() * 60000;
-    userBreakTime = newVal * 60000 + userWorkTime;
-  }*/
 })
 
-/*$('#work-time-input').change(function(){
-  userTime = $(this).val() * 60000;
-  userBreakTime = $('#break-time-input').val() * 60000 + userWorkTime;
-});
+hourGlassCords = [
+  [25, 13, 50, 48, 75, 13],
+  [31.25, 21.75, 50, 48, 68.75, 21.25, 25, 83, 50, 74.25, 75, 83],
+  [37.5, 30.5, 50, 48, 62.5, 30.5, 25, 83, 50, 65.5, 75, 83],
+  [43.75, 39.25, 50, 48, 56.25, 39.25,25, 83, 50, 56.75, 75, 83],
+  [25, 83, 50, 48, 75, 83]
+];
 
-$('#break-time-input').change(function(){
-  userBreakTime = $(this).val() * 60000 + userWorkTime;
-})*/
-
-function drawCircle(angle, id) {
-    var mainCanvas = document.getElementById(id);
-    var mainContext = mainCanvas.getContext('2d');
-    mainContext.beginPath();
-    mainContext.arc(200, 200, 150, 0, angle, false);
-    mainContext.lineWidth = 5;
-    mainContext.strokeStyle = '#66CC01';
-    mainContext.stroke();
+function drawHourGlass(cords, x) {
+    var canvas = document.getElementById('hourglass');
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,150,150);
+    ctx.beginPath();
+    ctx.moveTo(cords[x][0],cords[x][1]);
+    ctx.lineTo(cords[x][2],cords[x][3]);
+    ctx.lineTo(cords[x][4],cords[x][5]);
+    ctx.fill();
+    ctx.moveTo(cords[x][6],cords[x][7]);
+    ctx.lineTo(cords[x][8],cords[x][9]);
+    ctx.lineTo(cords[x][10],cords[x][11]);
+    ctx.fill();
   }
+drawHourGlass(hourGlassCords, 4);
+
