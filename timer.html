@@ -6,30 +6,37 @@
   <link rel='stylesheet' href='font-awesome.min.css'>
 </head>
 <body>
-  <div class='form'>
-    <label class=clockHeader>Work</label>
-    <input type='text' name='work-time-input' id='work-time-input' value='.2' />
-    <button class='incButton'>-</button>
-    <button class='incButton'>+</button>
-    <button id='startWork' class='startButton'><i class='fa fa-play fa-lg' aria-hidden='true'></i></button>
-    <button id='pauseWork' class='pauseButton'><i class='fa fa-pause fa-lg' aria-hidden='true'></i></button>
-    <button id='resetWork' class='resetButton'><i class='fa fa-refresh fa-lg' aria-hidden='true'></i></button>
+  <h1>Pommodoro Clock</h1>
+  <div class='clockSection'>
+    <div class='form'>
+      <label class=clockHeader>Work: </label>
+      <input type='text' name='work-time-input' id='work-time-input' value='.2' />
+      <button class='incButton'>-</button>
+      <button class='incButton'>+</button>
+      <button id='startWork' class='startButton'><i class='fa fa-play fa-lg' aria-hidden='true'></i></button>
+      <button id='pauseWork' class='pauseButton'><i class='fa fa-pause fa-lg' aria-hidden='true'></i></button>
+      <button id='resetWork' class='resetButton'><i class='fa fa-refresh fa-lg' aria-hidden='true'></i></button>
+    </div>
+    <div class='workClock'></div>
   </div>
-  <div class='workClock'></div>
-  <div class='form'>
-    <label class='clockHeader'>Break:</label>
-    <input type='text' name='break-time-input' id='break-time-input' value='.2' />
-    <button class='incButton'>-</button>
-    <button class='incButton'>+</button>
-    <button id='startBreak' class='startButton'><i class='fa fa-play fa-lg' aria-hidden='true'></i></button>
-    <button id='pauseBreak' class='pauseButton'><i class='fa fa-pause fa-lg' aria-hidden='true'></i></button>
-    <button id='resetBreak' class='resetButton'><i class='fa fa-refresh fa-lg' aria-hidden='true'></i></button>
+  <div class='clockSection'>
+    <div class='form'>
+      <label class='clockHeader'>Break:</label>
+      <input type='text' name='break-time-input' id='break-time-input' value='.2' />
+      <button class='incButton'>-</button>
+      <button class='incButton'>+</button>
+      <button id='startBreak' class='startButton'><i class='fa fa-play fa-lg' aria-hidden='true'></i></button>
+      <button id='pauseBreak' class='pauseButton'><i class='fa fa-pause fa-lg' aria-hidden='true'></i></button>
+      <button id='resetBreak' class='resetButton'><i class='fa fa-refresh fa-lg' aria-hidden='true'></i></button>
+    </div>
+    <div class='breakClock'></div>
   </div>
-  <div class='breakClock'></div>
-  <canvas id='hourglass' width='150' height='150'></canvas>
-  <i class='fa fa-hourglass-o fa-5x' aria-hidden='true'></i>
-
+  <div>
+    <canvas id='hourglass' width='150' height='150'></canvas>
+    <i class='fa fa-hourglass-o fa-5x' aria-hidden='true'></i>
+  </div>
 <script type='text/javascript' src='jquery-2.2.4.min.js'></script>
 <script type='text/javascript' src='timer.js'></script>
+<script type='text/javascript' src='howler.min.js'></script>
 </body>
 </html>

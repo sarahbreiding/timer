@@ -33,6 +33,9 @@ function createClock(clockDiv){
       $(clockDiv).html('0:00');
       clearInterval(timeinterval);
       timeSegments = [];
+      var sound = new Howl({
+        urls: ['TempleBell.mp3']
+      }).play();
       $('.startButton').show();
       $('.resetButton').hide();
       $('.pauseButton').hide();
@@ -40,6 +43,8 @@ function createClock(clockDiv){
     $('.resetButton').click(function(){
       $(clockDiv).empty();
       clearInterval(timeinterval);
+      drawHourGlass(hourGlassCords, 4);
+      timeSegments = [];
       if ($(this).attr('id') === 'resetWork'){
         $('#startWork').show();
         $('#pauseWork').hide();
@@ -66,7 +71,11 @@ $('.startButton').click(function(){
     for (var i = 4; i >= 0; i--){
       timeSegments.push(timeFifths * i);
     }
-    //$('.fa-hourglass-o').addClass('fa-hourglass-180');
+    if ($('.fa-hourglass-o').hasClass('fa-hourglass-180')){
+      $('.fa-hourglass-o').removeClass('fa-hourglass-180');
+    } else {
+      $('.fa-hourglass-o').addClass('fa-hourglass-180');
+    }
     createClock('.' + clockClass);
   }
   if ($(this).attr('id') === 'startWork'){

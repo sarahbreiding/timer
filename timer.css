@@ -48,45 +48,75 @@ table {
 }
 
 
-/* My CSS */
+/* Timer CSS */
 body {
-  background-color: #C8E4F0 ;
+  background-color: #C8E4F0;
   font-family: Helvetica, Arial, sans-serif;
   font-weight: 200;
-  margin: 5%;
+  margin: 3%;
+}
+
+h1 {
+  font-size: 2em;
 }
 
 .clockHeader {
   color: #A9A9A9;
   display: inline-block;
-  font-size: 1.5em;
+  font-size: 1em;
+  width: 2.75em;
+}
+
+.clockSection {
+  background-color: #efefef;
+  display: inline-block;
+  margin: 1% 1% 1% 0;
+  padding: 1% 0 1% 1%;
+  width: 19em;
 }
 
 .form {
-  background-color: #efefef;
   display: inline-block;
-  margin: 1%;
-  padding: 2%;
+  width: 73%;
 }
 
 .form input {
   border: none;
-  font-size: 1.5em;
+  font-size: 1em;
   margin: 0 1%;
   text-align: center;
-  width: 20%;
+  width: 19%;
+}
+
+.incButton {
+  background-color: #C8E4F0;
+  border: solid 1px #A9A9A9;
 }
 
 .pauseButton, .resetButton {
   display: none;
 }
 
+.startButton, .pauseButton, .resetButton {
+  border: none;
+  background-color: transparent;
+  color: #ff3b3f;
+  font-size: 1em;
+}
+
+.workClock, .breakClock {
+  background-color: #efefef;
+  display: inline-block;
+  font-size: 1.5em;
+}
+
 .fa-hourglass-o {
   position: relative;
   bottom: 73px;
   right: 139px;
+  transition: all .5s ease;
 }
 
-.fa-hourglass-o:hover {
+.fa-hourglass-180 {
   transform: rotate(180deg);
 }
